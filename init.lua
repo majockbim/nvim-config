@@ -39,21 +39,17 @@ require("lazy").setup({
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
-    config = function()
-      require("nvim-treesitter.configs").setup({
+    opts = {
         ensure_installed = { "c", "cpp", "go", "lua", "vim", "vimdoc",
 			     "python", "javascript", "html", "css", "typescript", "tsx"},
         
         sync_install = false,
-
         auto_install = true,
-
         highlight = {
           enable = true, 
 	  additional_vim_regex_highlighting = false,
         },
-      })
-    end
-  }
+      }
+   }
 
 })
