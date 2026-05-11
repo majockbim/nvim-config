@@ -11,7 +11,7 @@ if vim.g.neovide then
     vim.g.neovide_cursor_vfx_mode = "railgun" 
 end
 
--- syntax highlighting
+-- syntax highlighting + cursor smearing
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -26,6 +26,17 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+  {
+  "sphamba/smear-cursor.nvim",
+  event = "VimEnter",
+  cond = not vim.g.neovide,  -- only load in Neovim, not Neovide
+  opts = {
+    smear_between_buffers = true,
+    smear_between_neighbor_lines = true,
+    scroll_buffer_space = true,
+    legacy_computing_symbols_support = false,
+    }
+  },
   
   {
     "folke/tokyonight.nvim",
