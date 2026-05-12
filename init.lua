@@ -64,3 +64,6 @@ require("lazy").setup({
    }
 
 })
+
+-- block cursor in insert mode + blinking
+vim.opt.guicursor = "i:block-blinkwait700-blinkon400-blinkoff400"
