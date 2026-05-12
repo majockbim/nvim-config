@@ -65,5 +65,10 @@ require("lazy").setup({
 
 })
 
--- block cursor in insert mode + blinking
+-- block cursor in insert mode, blinking
 vim.opt.guicursor = "i:block-blinkwait700-blinkon400-blinkoff400"
+
+-- default tab amnt -> 4 spaces
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
