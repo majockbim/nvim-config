@@ -11,7 +11,8 @@ if vim.g.neovide then
     vim.g.neovide_cursor_vfx_mode = "railgun" 
 end
 
--- syntax highlighting + cursor smearing
+-- syntax highlighting + cursor smearing + auto close brackets n stuff
+-- + secret sauce (aka copilot)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
@@ -27,15 +28,25 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   {
-  "sphamba/smear-cursor.nvim",
-  event = "VimEnter",
-  cond = not vim.g.neovide,  -- only load in Neovim, not Neovide
-  opts = {
-    smear_between_buffers = true,
-    smear_between_neighbor_lines = true,
-    scroll_buffer_space = true,
-    legacy_computing_symbols_support = false,
-    }
+    "github/copilot.vim",
+    event = "InsertEnter",
+  },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    opts = {}
+  },
+
+  {
+    "sphamba/smear-cursor.nvim",
+    event = "VimEnter",
+    cond = not vim.g.neovide,  -- only load in Neovim, not Neovide
+    opts = {
+      smear_between_buffers = true,
+      smear_between_neighbor_lines = true,
+      scroll_buffer_space = true,
+      legacy_computing_symbols_support = false,
+      }
   },
   
   {
