@@ -74,6 +74,28 @@ require("lazy").setup({
       }
    }
 
+{
+    -- gitsigns for line-by-line status
+     "lewis6991/gitsigns.nvim",
+     event = { "BufReadPre", "BufNewFile" },
+     opts = {
+       signs = {
+         add          = { text = '│' },
+         change       = { text = '│' },
+         delete       = { text = '_' },
+         topdelete    = { text = '‾' },
+         changedelete = { text = '~' },
+       },
+     }
+   },
+
+   -- telescope for viewing project-wide git file status
+   {
+     "nvim-telescope/telescope.nvim",
+     branch = "0.1.x",
+     dependencies = { "nvim-lua/plenary.nvim" }
+   }
+
 })
 
 -- block cursor in insert mode, blinking
