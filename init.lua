@@ -1,16 +1,14 @@
 -- line #'s
 vim.opt.number = true
-
 -- target directory
 if vim.fn.argc() == 0 then
     vim.api.nvim_set_current_dir("C:/Users/pretb/code")
 end
-
 -- cursort effect (neovide)
 if vim.g.neovide then
     vim.g.neovide_cursor_vfx_mode = "railgun" 
+    vim.o.guifont = "0xProto Nerd Font Mono:h12"
 end
-
 -- syntax highlighting + cursor smearing + auto close brackets n stuff
 -- + secret sauce (aka copilot)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -25,7 +23,6 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
-
 require("lazy").setup({
   {
     "github/copilot.vim",
@@ -36,7 +33,6 @@ require("lazy").setup({
     event = "InsertEnter",
     opts = {}
   },
-
   {
     "sphamba/smear-cursor.nvim",
     event = "VimEnter",
@@ -57,7 +53,6 @@ require("lazy").setup({
       vim.cmd([[colorscheme tokyonight-night]])
     end,
   },
-
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
@@ -72,9 +67,8 @@ require("lazy").setup({
 	  additional_vim_regex_highlighting = false,
         },
       }
-   }
-
-{
+   },
+   {
     -- gitsigns for line-by-line status
      "lewis6991/gitsigns.nvim",
      event = { "BufReadPre", "BufNewFile" },
@@ -88,19 +82,29 @@ require("lazy").setup({
        },
      }
    },
-
    -- telescope for viewing project-wide git file status
    {
      "nvim-telescope/telescope.nvim",
      branch = "0.1.x",
      dependencies = { "nvim-lua/plenary.nvim" }
+   },
+   -- vscode-like tabs with icons
+   {
+     "akinsho/bufferline.nvim",
+     version = "*",
+     dependencies = "nvim-tree/nvim-web-devicons",
+     opts = {
+       options = {
+         mode = "buffers",
+         separator_style = "slant",
+         show_buffer_close_icons = true,
+         show_close_icon = true,
+       }
+     }
    }
-
 })
-
 -- block cursor in insert mode, blinking
 vim.opt.guicursor = "i:block-blinkwait700-blinkon400-blinkoff400"
-
 -- default tab amnt -> 4 spaces
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
