@@ -101,6 +101,49 @@ require("lazy").setup({
          show_close_icon = true,
        }
      }
+   },
+   -- statusline
+   {
+     "nvim-lualine/lualine.nvim",
+     dependencies = { "nvim-tree/nvim-web-devicons" },
+     opts = {
+       options = {
+         theme = "tokyonight",
+         component_separators = "|",
+         section_separators = { left = "", right = "" },
+       }
+     }
+   },
+   -- LSP support
+   {
+     "neovim/nvim-lspconfig",
+     dependencies = {
+       "williamboman/mason.nvim",
+       "williamboman/mason-lspconfig.nvim",
+     },
+     config = function()
+       require("mason").setup()
+       require("mason-lspconfig").setup({
+         ensure_installed = { "lua_ls", "pyright", "ts_ls" },
+       })
+
+       -- Modern Neovim 0.11+ way: Use LspAttach for keymaps
+       vim.api.nvim_create_autocmd("LspAttach", {
+         callback = function(args)
+           local bufnr = args.buf
+           local opts = { buffer = bufnr, silent = true }
+           vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+           vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+           vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+           vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+         end,
+       })
+
+       -- Enable servers using the native API
+       vim.lsp.enable("lua_ls")
+       vim.lsp.enable("pyright")
+       vim.lsp.enable("ts_ls")
+     end
    }
 })
 -- block cursor in insert mode, blinking
