@@ -1,5 +1,6 @@
 -- line #'s
 vim.opt.number = true
+vim.opt.termguicolors = true
 -- target directory
 if vim.fn.argc() == 0 then
     vim.api.nvim_set_current_dir("C:/Users/pretb/code")
@@ -45,12 +46,50 @@ require("lazy").setup({
       }
   },
   
-  {
+   {
     "folke/tokyonight.nvim",
     lazy = false,
     priority = 1000,
     config = function()
+      require("tokyonight").setup({ 
+        transparent = true,
+        styles = {
+          sidebars = "transparent",
+          floats = "transparent",
+        },
+      })
+      
+      local function apply_transparency()
+        local groups = {
+          "Normal", "NormalNC", "NormalFloat", "SignColumn", "EndOfBuffer",
+          "MsgArea", "TelescopeNormal", "TelescopeBorder", "NvimTreeNormal",
+          "TabLine", "TabLineFill", "TabLineSel", "StatusLine", "StatusLineNC",
+          "WinBar", "WinBarNC"
+        }
+        for _, group in ipairs(groups) do
+          vim.api.nvim_set_hl(0, group, { bg = "NONE", ctermbg = "NONE" })
+        end
+
+        -- Brute force all BufferLine groups
+        for _, hl in ipairs(vim.api.nvim_get_hl(0, {})) do
+          if hl:find("^BufferLine") or hl:find("^TabLine") then
+            vim.api.nvim_set_hl(0, hl, { bg = "NONE", ctermbg = "NONE" })
+          end
+        end
+      end
+
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = "*",
+        callback = function()
+          apply_transparency()
+          -- Defer to ensure plugins are finished loading
+          vim.defer_fn(apply_transparency, 100)
+        end
+      })
+
       vim.cmd([[colorscheme tokyonight-night]])
+      apply_transparency()
+      vim.defer_fn(apply_transparency, 500)
     end,
   },
   {
@@ -96,10 +135,33 @@ require("lazy").setup({
      opts = {
        options = {
          mode = "buffers",
-         separator_style = "slant",
+         separator_style = "thin",
          show_buffer_close_icons = true,
          show_close_icon = true,
-       }
+       },
+       highlights = {
+         fill = { bg = "NONE" },
+         background = { bg = "NONE" },
+         tab = { bg = "NONE" },
+         tab_selected = { bg = "NONE" },
+         buffer_visible = { bg = "NONE" },
+         buffer_selected = { bg = "NONE", italic = false },
+         indicator_visible = { bg = "NONE" },
+         indicator_selected = { bg = "NONE" },
+         modified = { bg = "NONE" },
+         modified_visible = { bg = "NONE" },
+         modified_selected = { bg = "NONE" },
+         close_button = { bg = "NONE" },
+         close_button_visible = { bg = "NONE" },
+         close_button_selected = { bg = "NONE" },
+         duplicate_selected = { bg = "NONE" },
+         duplicate_visible = { bg = "NONE" },
+         duplicate = { bg = "NONE" },
+         pick_selected = { bg = "NONE" },
+         pick_visible = { bg = "NONE" },
+         pick = { bg = "NONE" },
+         offset_separator = { bg = "NONE" },
+       },
      }
    },
    -- statusline
