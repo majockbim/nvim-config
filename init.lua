@@ -214,3 +214,6 @@ vim.opt.guicursor = "i:block-blinkwait700-blinkon400-blinkoff400"
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
+
+-- map :cd %:p:h to :cd now
+vim.cmd([[cnoreabbrev <expr> now (getcmdtype() == ':' && getcmdline() == 'cd now') ? '%:p:h' : 'now']])
