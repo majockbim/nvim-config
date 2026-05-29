@@ -206,7 +206,13 @@ require("lazy").setup({
        vim.lsp.enable("pyright")
        vim.lsp.enable("ts_ls")
      end
-   }
+   },
+   -- Discord Rich Presence
+   {
+     'vyfor/cord.nvim',
+     event = 'VeryLazy',
+     opts = {},
+   },
 })
 -- block cursor in insert mode, blinking
 vim.opt.guicursor = "i:block-blinkwait700-blinkon400-blinkoff400"
