@@ -63,6 +63,8 @@ require("lazy").setup({
         local groups = {
           "Normal", "NormalNC", "NormalFloat", "SignColumn", "EndOfBuffer",
           "MsgArea", "TelescopeNormal", "TelescopeBorder", "NvimTreeNormal",
+          "NeoTreeNormal", "NeoTreeNormalNC", "NeoTreeSignColumn", "NeoTreeWinSeparator",
+          "NeoTreeEndOfBuffer", "NeoTreeFloatNormal", "NeoTreeFloatBorder",
           "TabLine", "TabLineFill", "TabLineSel", "StatusLine", "StatusLineNC",
           "WinBar", "WinBarNC"
         }
@@ -138,6 +140,14 @@ require("lazy").setup({
          separator_style = "thin",
          show_buffer_close_icons = true,
          show_close_icon = true,
+         offsets = {
+           {
+             filetype = "neo-tree",
+             text = "File Explorer",
+             text_align = "center",
+             separator = true,
+           }
+         },
        },
        highlights = {
          fill = { bg = "NONE" },
@@ -208,11 +218,117 @@ require("lazy").setup({
      end
    },
    -- Discord Rich Presence
-   {
-     'vyfor/cord.nvim',
-     event = 'VeryLazy',
-     opts = {},
-   },
+    {
+      'vyfor/cord.nvim',
+      event = 'VeryLazy',
+      opts = {},
+    },
+    {
+      "nvim-neo-tree/neo-tree.nvim",
+      branch = "v3.x",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        "nvim-tree/nvim-web-devicons",
+        "MunifTanjim/nui.nvim",
+      },
+      keys = {
+        { "<leader>e", "<cmd>Neotree toggle<cr>", desc = "NeoTree toggle" },
+      },
+      config = function()
+        require("neo-tree").setup({
+          close_if_last_window = true,
+          window = {
+            width = 30,
+            mappings = {
+              ["<space>"] = "none",
+            },
+          },
+          filesystem = {
+            filtered_items = {
+              visible = true,
+              hide_dotfiles = false,
+              hide_gitignored = false,
+            },
+            follow_current_file = {
+              enabled = true,
+            },
+            use_libuv_file_watcher = true,
+          },
+        })
+      end,
+    },
+    {
+      "goolord/alpha-nvim",
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+      config = function()
+        local alpha = require("alpha")
+        local dashboard = require("alpha.themes.dashboard")
+        -- Define Sharingan custom highlight colors
+        vim.api.nvim_set_hl(0, "SharinganRed", { fg = "#ff2a2a", bold = true })
+        vim.api.nvim_set_hl(0, "SharinganWhite", { fg = "#e6e6e6" })
+        vim.api.nvim_set_hl(0, "SharinganBlue", { fg = "#3d59a1", bold = true })
+        vim.api.nvim_set_hl(0, "SharinganBlack", { fg = "#1a1a1a", bold = true })
+        
+        dashboard.section.header.val = {
+          "⠤⣤⣤⣤⣄⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣠⣤⠤⠤⠴⠶⠶⠶⠶",
+          "⢠⣤⣤⡄⣤⣤⣤⠄⣀⠉⣉⣙⠒⠤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠴⠘⣉⢡⣤⡤⠐⣶⡆⢶⠀⣶⣶⡦",
+          "⣄⢻⣿⣧⠻⠇⠋⠀⠋⠀⢘⣿⢳⣦⣌⠳⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠞⣡⣴⣧⠻⣄⢸⣿⣿⡟⢁⡻⣸⣿⡿⠁",
+          "⠈⠃⠙⢿⣧⣙⠶⣿⣿⡷⢘⣡⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣾⣿⣿⣿⣷⣝⡳⠶⠶⠾⣛⣵⡿⠋⠀⠀",
+          "⠀⠀⠀⠀⠉⠻⣿⣶⠂⠘⠛⠛⠛⢛⡛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠉⠛⠀⠉⠒⠛⠀⠀⠀⠀⠀",
+          "⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⢸⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+          "⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⣾⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+          "⠀⠀⠀⠀⠀⠀⣿⡇⠀⠀⠀⠀⠀⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+          "⠀⠀⠀⠀⠀⠀⢻⡁⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+          "⠀⠀⠀⠀⠀⠀⠘⡇⠀⠀⠀⠀⠀⠀⠀",
+          "⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
+          "⠀⠀⠀ ⠀⠀⠀⠿",
+        }
+        
+        dashboard.section.header.opts.hl = {
+          { { "SharinganWhite", 0, 30 }, { "SharinganWhite", 117, 150 } },
+          { { "SharinganWhite", 0, 45 }, { "SharinganWhite", 105, 150 } },
+          { { "SharinganWhite", 0, 51 }, { "SharinganWhite", 102, 150 } },
+          { { "SharinganWhite", 0, 51 }, { "SharinganWhite", 99, 144 } },
+          {
+            { "SharinganWhite", 12, 18 },
+            { "SharinganRed",   18, 24 },
+            { "SharinganWhite", 24, 51 },
+            { "SharinganWhite", 111, 135 },
+          },
+          -- Rows 5-8: red drip (left)
+          { { "SharinganRed", 18, 24 }, { "SharinganRed", 39, 45 } },
+          { { "SharinganRed", 18, 24 }, { "SharinganRed", 39, 42 } },
+          { { "SharinganRed", 18, 24 }, { "SharinganRed", 39, 42 } },
+          { { "SharinganRed", 18, 24 }, { "SharinganRed", 39, 42 } },
+          -- Rows 9-11: red  drip
+          { { "SharinganRed", 18, 24 } },
+          { { "SharinganRed", 21, 24 } },
+          { { "SharinganRed", 19, 22 } },
+        }
+        
+        dashboard.section.buttons.val = {
+          dashboard.button("n", "  New file", ":ene <BAR> startinsert <CR>"),
+          dashboard.button("f", "  Find file", ":Telescope find_files<CR>"),
+          dashboard.button("r", "  Recent files", ":Telescope oldfiles<CR>"),
+          dashboard.button("c", "  Config", ":e C:/Users/pretb/AppData/Local/nvim/init.lua<CR>"),
+          dashboard.button("q", "  Quit", ":qa<CR>"),
+        }
+        
+        local handle = io.popen("nvim --version")
+        local version = "Neovim"
+        if handle then
+          local result = handle:read("*a")
+          handle:close()
+          version = result:match("NVIM v([^\n]+)") or "Neovim"
+        end
+        
+        dashboard.section.footer.val = {
+          "start building"
+        }
+        
+        alpha.setup(dashboard.opts)
+      end
+    },
 })
 -- block cursor in insert mode, blinking
 vim.opt.guicursor = "i:block-blinkwait700-blinkon400-blinkoff400"
