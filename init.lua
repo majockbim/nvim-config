@@ -326,6 +326,20 @@ require("lazy").setup({
           "start building"
         }
         
+        -- Dynamically calculate padding to center the dashboard vertically
+        local terminal_height = vim.o.lines
+        local dashboard_height = 22
+        local top_padding = math.max(1, math.floor((terminal_height - dashboard_height) / 2))
+        
+        dashboard.config.layout = {
+          { type = "padding", val = top_padding },
+          dashboard.section.header,
+          { type = "padding", val = 2 },
+          dashboard.section.buttons,
+          { type = "padding", val = 2 },
+          dashboard.section.footer,
+        }
+        
         alpha.setup(dashboard.opts)
       end
     },
@@ -336,6 +350,39 @@ vim.opt.guicursor = "i:block-blinkwait700-blinkon400-blinkoff400"
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
+-- Auto-commands for Alpha dashboard buffer
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "alpha",
+  callback = function()
+    vim.opt_local.list = false           -- Hide invisible characters (like spaces/tabs dots)
+    vim.opt_local.fillchars = { eob = " " } -- Hide tildes (~) at the end of buffer
+    vim.opt_local.foldenable = false     -- Disable folding
+    vim.opt_local.number = false         -- Hide line numbers
+    vim.opt_local.relativenumber = false -- Hide relative numbers
+    
+    -- Disable indent guides in the dashboard buffer
+    pcall(function()
+      vim.b.miniindentscope_disable = true
+      vim.b.indent_blankline_enabled = false
+      vim.b.ibl_line_active = false
+    end)
+    
+    -- Prevent scrolling and cursor straying from buttons
+    local nops = {
+      "<ScrollWheelDown>", "<ScrollWheelUp>",
+      "<C-d>", "<C-u>", "<C-f>", "<C-b>",
+      "G", "<PageDown>", "<PageUp>",
+      "H", "M", "L", -- restrict moving to top/middle/bottom of screen
+    }
+    for _, key in ipairs(nops) do
+      vim.keymap.set("n", key, "<Nop>", { buffer = true, silent = true })
+    end
+    
+    -- Safely map arrow keys to j/k (which are locked to buttons by alpha-nvim)
+    vim.keymap.set("n", "<Down>", "j", { buffer = true, silent = true, remap = true })
+    vim.keymap.set("n", "<Up>", "k", { buffer = true, silent = true, remap = true })
+  end,
+})
 
 -- map :cd %:p:h to :cd now
 vim.cmd([[cnoreabbrev <expr> now (getcmdtype() == ':' && getcmdline() == 'cd now') ? '%:p:h' : 'now']])
