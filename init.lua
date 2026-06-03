@@ -78,6 +78,10 @@ require("lazy").setup({
             vim.api.nvim_set_hl(0, hl, { bg = "NONE", ctermbg = "NONE" })
           end
         end
+
+        -- grey out Git Ignored and Hidden files in NeoTree
+        vim.api.nvim_set_hl(0, "NeoTreeGitIgnored", { fg = "#565f89", ctermfg = "Grey", italic = true })
+        vim.api.nvim_set_hl(0, "NeoTreeDimText", { fg = "#565f89", ctermfg = "Grey" })
       end
 
       vim.api.nvim_create_autocmd("ColorScheme", {
@@ -187,36 +191,47 @@ require("lazy").setup({
      }
    },
    -- LSP support
-   {
-     "neovim/nvim-lspconfig",
-     dependencies = {
-       "williamboman/mason.nvim",
-       "williamboman/mason-lspconfig.nvim",
-     },
-     config = function()
-       require("mason").setup()
-       require("mason-lspconfig").setup({
-         ensure_installed = { "lua_ls", "pyright", "ts_ls" },
-       })
+    {
+      "neovim/nvim-lspconfig",
+      dependencies = {
+        "williamboman/mason.nvim",
+        "williamboman/mason-lspconfig.nvim",
+      },
+      config = function()
+        require("mason").setup()
+        require("mason-lspconfig").setup({
+          ensure_installed = { "lua_ls", "pyright", "ts_ls", "clangd" },
+        })
 
-       -- Modern Neovim 0.11+ way: Use LspAttach for keymaps
-       vim.api.nvim_create_autocmd("LspAttach", {
-         callback = function(args)
-           local bufnr = args.buf
-           local opts = { buffer = bufnr, silent = true }
-           vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-           vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-           vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-           vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-         end,
-       })
+        -- use LspAttach for keymaps
+        vim.api.nvim_create_autocmd("LspAttach", {
+          callback = function(args)
+            local bufnr = args.buf
+            local opts = { buffer = bufnr, silent = true }
+            vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+            vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+            vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+          end,
+        })
 
-       -- Enable servers using the native API
-       vim.lsp.enable("lua_ls")
-       vim.lsp.enable("pyright")
-       vim.lsp.enable("ts_ls")
-     end
-   },
+        -- Enable servers using the native API
+        vim.lsp.enable("lua_ls")
+        vim.lsp.enable("pyright")
+        vim.lsp.enable("ts_ls")
+
+        -- Enable and configure clangd with query-driver for MSYS2 toolchain
+        vim.lsp.config("clangd", {
+          cmd = {
+            "clangd",
+            "--background-index",
+            "--clang-tidy",
+            "--query-driver=C:/msys64/ucrt64/bin/g++,C:/msys64/ucrt64/bin/c++,C:/msys64/ucrt64/bin/*"
+          }
+        })
+        vim.lsp.enable("clangd")
+      end
+    },
    -- Discord Rich Presence
     {
       'vyfor/cord.nvim',
